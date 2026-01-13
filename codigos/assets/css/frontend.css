@@ -1,0 +1,319 @@
+/* ULL Códigos - Frontend Styles */
+
+:root {
+    --ull-codigos-primary: #003366;
+    --ull-codigos-secondary: #0066cc;
+    --ull-codigos-light: #f5f5f5;
+    --ull-codigos-border: #ddd;
+    --ull-codigos-radius: 6px;
+}
+
+/* Container */
+.ull-codigo-container {
+    background: #fff;
+    border: 1px solid var(--ull-codigos-border);
+    border-radius: var(--ull-codigos-radius);
+    margin: 20px 0;
+    overflow: hidden;
+}
+
+.ull-codigo-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--ull-codigos-border);
+}
+
+.ull-codigo-titulo {
+    margin: 0 0 10px 0;
+    color: var(--ull-codigos-primary);
+}
+
+.ull-codigo-descripcion {
+    margin-bottom: 15px;
+    color: #666;
+}
+
+.ull-codigo-actions {
+    margin-top: 15px;
+}
+
+.ull-codigo-btn-pdf {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, var(--ull-codigos-primary) 0%, #002244 100%);
+    color: #fff !important;
+    text-decoration: none !important;
+    border-radius: var(--ull-codigos-radius);
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.ull-codigo-btn-pdf:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Índice */
+.ull-codigo-indice {
+    background: var(--ull-codigos-light);
+    padding: 20px;
+    border-bottom: 1px solid var(--ull-codigos-border);
+}
+
+.ull-codigo-indice h3 {
+    margin-top: 0;
+    color: var(--ull-codigos-primary);
+}
+
+.ull-codigo-indice ol {
+    margin: 0;
+    padding-left: 25px;
+}
+
+.ull-codigo-indice li {
+    margin: 5px 0;
+}
+
+.ull-codigo-indice a {
+    color: var(--ull-codigos-secondary);
+    text-decoration: none;
+}
+
+.ull-codigo-indice a:hover {
+    text-decoration: underline;
+}
+
+/* Normas */
+.ull-codigo-normas {
+    padding: 20px;
+}
+
+.ull-codigo-seccion-titulo {
+    color: var(--ull-codigos-primary);
+    padding: 10px 15px;
+    background: var(--ull-codigos-light);
+    border-left: 4px solid var(--ull-codigos-primary);
+    margin: 20px 0 15px 0;
+}
+
+/* Estilo Acordeón */
+.ull-codigo-normas-accordion .ull-codigo-norma-item {
+    border: 1px solid var(--ull-codigos-border);
+    border-radius: var(--ull-codigos-radius);
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.ull-codigo-norma-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: var(--ull-codigos-light);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.ull-codigo-norma-header:hover {
+    background: #eee;
+}
+
+.ull-codigo-norma-titulo {
+    font-weight: 600;
+    color: var(--ull-codigos-primary);
+    flex: 1;
+}
+
+.ull-codigo-norma-numero {
+    background: var(--ull-codigos-primary);
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+    margin: 0 15px;
+}
+
+.ull-codigo-norma-toggle {
+    color: #999;
+    transition: transform 0.3s;
+}
+
+.ull-codigo-norma-item.active .ull-codigo-norma-toggle {
+    transform: rotate(180deg);
+}
+
+.ull-codigo-norma-content {
+    display: none;
+    padding: 20px;
+    border-top: 1px solid var(--ull-codigos-border);
+}
+
+.ull-codigo-norma-item.active .ull-codigo-norma-content {
+    display: block;
+}
+
+.ull-codigo-norma-nota {
+    background: #fffde7;
+    padding: 15px;
+    border-left: 4px solid #ffc107;
+    margin-bottom: 15px;
+    font-style: italic;
+}
+
+.ull-codigo-norma-fecha {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.ull-codigo-norma-link {
+    display: inline-block;
+    margin-top: 15px;
+    color: var(--ull-codigos-secondary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.ull-codigo-norma-link:hover {
+    text-decoration: underline;
+}
+
+/* Estilo Lista */
+.ull-codigo-normas-list .ull-codigo-norma-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--ull-codigos-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ull-codigo-normas-list .ull-codigo-norma-item:last-child {
+    border-bottom: none;
+}
+
+.ull-codigo-normas-list .ull-codigo-norma-item a {
+    color: var(--ull-codigos-primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.ull-codigo-normas-list .ull-codigo-norma-item a:hover {
+    color: var(--ull-codigos-secondary);
+}
+
+/* Estilo Tarjetas */
+.ull-codigo-normas-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.ull-codigo-normas-cards .ull-codigo-card {
+    background: #fff;
+    border: 1px solid var(--ull-codigos-border);
+    border-radius: var(--ull-codigos-radius);
+    padding: 20px;
+    transition: all 0.3s;
+}
+
+.ull-codigo-normas-cards .ull-codigo-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-color: var(--ull-codigos-secondary);
+}
+
+.ull-codigo-normas-cards .ull-codigo-card h4 {
+    margin: 0 0 10px 0;
+}
+
+.ull-codigo-normas-cards .ull-codigo-card h4 a {
+    color: var(--ull-codigos-primary);
+    text-decoration: none;
+}
+
+/* Lista de Códigos */
+.ull-codigos-lista {
+    display: grid;
+    gap: 20px;
+}
+
+.ull-codigos-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.ull-codigos-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.ull-codigos-cols-4 { grid-template-columns: repeat(4, 1fr); }
+.ull-codigos-cols-5 { grid-template-columns: repeat(5, 1fr); }
+.ull-codigos-cols-6 { grid-template-columns: repeat(6, 1fr); }
+
+.ull-codigos-item {
+    display: block;
+    background: #fff;
+    border: 1px solid var(--ull-codigos-border);
+    border-radius: var(--ull-codigos-radius);
+    overflow: hidden;
+    text-decoration: none !important;
+    color: inherit !important;
+    transition: all 0.3s;
+}
+
+.ull-codigos-item:hover {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transform: translateY(-3px);
+    border-color: var(--ull-codigos-secondary);
+}
+
+.ull-codigos-item-imagen {
+    height: 150px;
+    overflow: hidden;
+    background: var(--ull-codigos-light);
+}
+
+.ull-codigos-item-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ull-codigos-item-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--ull-codigos-primary) 0%, #004488 100%);
+    color: #fff;
+}
+
+.ull-codigos-item-placeholder span {
+    font-size: 48px;
+}
+
+.ull-codigos-item-info {
+    padding: 15px;
+}
+
+.ull-codigos-item-titulo {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    color: var(--ull-codigos-primary);
+}
+
+.ull-codigos-item-contador {
+    display: inline-block;
+    background: var(--ull-codigos-light);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #666;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .ull-codigos-cols-2,
+    .ull-codigos-cols-3,
+    .ull-codigos-cols-4,
+    .ull-codigos-cols-5,
+    .ull-codigos-cols-6 {
+        grid-template-columns: 1fr;
+    }
+    
+    .ull-codigo-normas-cards {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,190 @@
+/* ULL Códigos - Admin Styles */
+
+.ull-codigos-normas-wrapper {
+    margin: 10px 0;
+}
+
+.ull-codigos-search-box {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.ull-codigos-search-box input {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#ull-codigos-search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+#ull-codigos-search-results.active {
+    display: block;
+}
+
+.ull-codigos-search-item {
+    padding: 12px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s;
+}
+
+.ull-codigos-search-item:hover {
+    background: #f5f5f5;
+}
+
+.ull-codigos-search-item:last-child {
+    border-bottom: none;
+}
+
+.ull-codigos-search-item-title {
+    font-weight: 600;
+    color: #333;
+}
+
+.ull-codigos-search-item-numero {
+    font-size: 12px;
+    color: #666;
+    background: #eee;
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-left: 10px;
+}
+
+/* Lista de normas */
+.ull-codigos-normas-list {
+    min-height: 100px;
+    border: 2px dashed #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    background: #fafafa;
+}
+
+.ull-codigos-normas-list:empty::before {
+    content: "Busque y añada normas usando el campo de búsqueda";
+    display: block;
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+    font-style: italic;
+}
+
+.ull-codigos-norma-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 8px;
+    cursor: move;
+    transition: box-shadow 0.2s;
+}
+
+.ull-codigos-norma-item:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.ull-codigos-norma-item.ui-sortable-helper {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.ull-codigos-norma-handle {
+    color: #999;
+    cursor: move;
+    padding: 5px;
+    flex-shrink: 0;
+}
+
+.ull-codigos-norma-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.ull-codigos-norma-info strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.ull-codigos-norma-numero {
+    display: inline-block;
+    background: #003366;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+}
+
+.ull-codigos-norma-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.ull-codigos-norma-fields input,
+.ull-codigos-norma-fields textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 13px;
+}
+
+.ull-codigos-norma-fields textarea {
+    min-height: 60px;
+    resize: vertical;
+}
+
+.ull-codigos-remove-norma {
+    background: #dc3545;
+    color: #fff;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: background 0.2s;
+}
+
+.ull-codigos-remove-norma:hover {
+    background: #c82333;
+}
+
+/* Logo field */
+.ull-codigos-logo-field {
+    max-width: 400px;
+}
+
+#ull-codigos-logo-preview img {
+    max-height: 80px;
+    border: 1px solid #ddd;
+    padding: 5px;
+    background: #f9f9f9;
+}
+
+/* Color picker sync */
+input[type="color"] + input[type="text"] {
+    width: 80px;
+    text-align: center;
+}
