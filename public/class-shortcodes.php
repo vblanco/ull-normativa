@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class ULL_Shortcodes {
+class ULL_Normativa_Shortcodes {
     
     public function __construct() {
         add_shortcode('ull_normativa_listado', array($this, 'listado_shortcode'));
@@ -1589,4 +1589,4 @@ class ULL_Shortcodes {
     }
 }
 
-new ULL_Shortcodes();
+new ULL_Normativa_Shortcodes();

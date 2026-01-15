@@ -44,11 +44,25 @@ final class ULL_Normativa {
     private function init_hooks() {
         register_activation_hook(__FILE__, array($this, 'activate'));
         register_deactivation_hook(__FILE__, array($this, 'deactivate'));
+
+        // NUEVO: Soporte para sitios creados DESPUÉS de activar el plugin
+        add_action('wp_initialize_site', array($this, 'activate_new_site'));
         
         add_action('plugins_loaded', array($this, 'load_dependencies'));
         add_action('init', array($this, 'load_textdomain'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_frontend_assets'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
+    }
+    
+    /**
+     * Función para inicializar un nuevo sitio en la red
+     */
+    public function activate_new_site($site) {
+        if (is_plugin_active_for_network(ULL_NORMATIVA_PLUGIN_BASENAME)) {
+            switch_to_blog($site->id);
+            $this->run_activation_logic();
+            restore_current_blog();
+        }
     }
     
     public function load_dependencies() {
@@ -94,7 +108,21 @@ final class ULL_Normativa {
         new ULL_Unified_PDF_Export();
     }
     
-    public function activate() {
+    // Cambiar el hook para aceptar el parámetro de red y dar soporte multisite
+    public function activate($network_wide) {
+        if (is_multisite() && $network_wide) {
+            // Si se activa para la red, iterar por todos los sitios
+            foreach (get_sites(['fields' => 'ids']) as $blog_id) {
+                switch_to_blog($blog_id);
+                $this->run_activation_logic();
+                restore_current_blog();
+            }
+        } else {
+            $this->run_activation_logic();
+        }
+    }
+
+    private function run_activation_logic() {
         // Crear tablas personalizadas
         $this->create_tables();
         
