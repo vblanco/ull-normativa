@@ -218,6 +218,7 @@ class ULL_Normativa_Shortcodes {
             'tipo' => '',
             'estado' => '',
             'categoria' => '',
+            'materia' => '',
             'limit' => $items_per_page_config, // Usar configuración guardada
             'modo' => 'list',
             'orden' => 'fecha_desc',
@@ -304,6 +305,9 @@ class ULL_Normativa_Shortcodes {
         }
         if (!empty($atts['categoria'])) {
             $tax_query[] = array('taxonomy' => 'categoria_norma', 'field' => 'slug', 'terms' => $atts['categoria']);
+        }
+        if (!empty($atts['materia'])) {
+            $tax_query[] = array('taxonomy' => 'materia_norma', 'field' => 'slug', 'terms' => $atts['materia']);
         }
         if (!empty($atts['estado'])) {
             $meta_query[] = array('key' => '_estado_norma', 'value' => $atts['estado']);

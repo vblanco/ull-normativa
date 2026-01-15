@@ -72,6 +72,13 @@ class ULL_Unified_PDF_Export {
                 require_once ULL_NORMATIVA_PLUGIN_DIR . 'includes/class-dompdf-installer.php';
                 $this->dompdf_installer = new ULL_DOMPDF_Installer();
             }
+
+            // Cargar el autoloader explícitamente antes de devolver la instancia
+            $autoload_path = $this->dompdf_installer->get_autoload_path();
+            if ($autoload_path && file_exists($autoload_path)) {
+                require_once $autoload_path;
+            }
+
             return $this->dompdf_installer->get_dompdf_instance();
         }
         
@@ -166,8 +173,18 @@ class ULL_Unified_PDF_Export {
     private function render_with_dompdf($html, $filename, $settings = array(), $normas_data = null) {
         $dompdf = $this->get_dompdf_instance();
         
-        if (!$dompdf) {
-            wp_die(__('Error al cargar la librería PDF', 'ull-normativa'));
+        // VERIFICACIÓN CRÍTICA PARA MULTISITE
+        if (!$dompdf || !class_exists('\Dompdf\Options')) {
+            // Si falla, intentamos cargar la ruta global manualmente como último recurso
+            $global_autoload = WP_CONTENT_DIR . '/uploads/ull-normativa-libs/dompdf/autoload.inc.php';
+            if (file_exists($global_autoload)) {
+                require_once $global_autoload;
+            }
+        
+            // Reintentar instancia
+            if (!class_exists('\Dompdf\Options')) {
+                wp_die(__('La librería PDF no está configurada correctamente para la red Multisite.', 'ull-normativa'));
+            }
         }
         
         // Obtener configuración

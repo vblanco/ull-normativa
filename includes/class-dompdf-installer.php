@@ -37,9 +37,17 @@ class ULL_DOMPDF_Installer {
      * Constructor
      */
     public function __construct() {
-        $upload_dir = wp_upload_dir();
-        $this->install_dir = $upload_dir['basedir'] . '/ull-normativa-libs';
-        $this->temp_dir = $upload_dir['basedir'] . '/ull-normativa-temp';
+        // Definir base común para Multisite o Sitio Único
+        if ( is_multisite() ) {
+        // Forzamos la ruta base de la red: /wp-content/uploads/
+            $base_path = WP_CONTENT_DIR . '/uploads';
+        } else {
+            $upload_dir = wp_upload_dir();
+            $base_path = $upload_dir['basedir'];
+        }
+
+        $this->install_dir = $base_path . '/ull-normativa-libs';
+        $this->temp_dir    = $base_path . '/ull-normativa-temp';    
         
         add_action('admin_init', array($this, 'handle_install_request'));
     }
@@ -502,15 +510,14 @@ class ULL_DOMPDF_Installer {
         $dompdf_dir = $this->install_dir . '/dompdf';
         $autoload_file = $dompdf_dir . '/autoload.inc.php';
         
-        // Contenido del autoload personalizado - VERSIÓN SIMPLIFICADA Y SEGURA
+        // Contenido del autoload personalizado - VERSIÓN MULTISITE COMPATIBLE
         $autoload_content = <<<'PHP'
 <?php
 /**
  * Autoload personalizado para DOMPDF
- * Generado automáticamente por ULL Normativa - Versión Segura
+ * Generado automáticamente por ULL Normativa - Multisite Ready
  */
 
-// Definir constantes de DOMPDF
 if (!defined('DOMPDF_DIR')) {
     define('DOMPDF_DIR', __DIR__);
 }
@@ -519,29 +526,26 @@ if (!defined('DOMPDF_FONT_DIR')) {
     define('DOMPDF_FONT_DIR', DOMPDF_DIR . '/lib/fonts/');
 }
 
+// Configuración de rutas de caché y temp dinámicas
 if (!defined('DOMPDF_FONT_CACHE')) {
-    $upload_dir = wp_upload_dir();
-    if ($upload_dir && isset($upload_dir['basedir'])) {
-        define('DOMPDF_FONT_CACHE', $upload_dir['basedir'] . '/ull-normativa/dompdf-cache/');
-    }
+    $base_uploads = (is_multisite()) ? WP_CONTENT_DIR . '/uploads' : wp_upload_dir()['basedir'];
+    $path = $base_uploads . '/ull-normativa/dompdf-cache/';
+    if (!is_dir($path)) { @mkdir($path, 0755, true); }
+    define('DOMPDF_FONT_CACHE', $path);
 }
 
 if (!defined('DOMPDF_TEMP_DIR')) {
-    $upload_dir = wp_upload_dir();
-    if ($upload_dir && isset($upload_dir['basedir'])) {
-        define('DOMPDF_TEMP_DIR', $upload_dir['basedir'] . '/ull-normativa/dompdf-temp/');
-    }
+    $base_uploads = (is_multisite()) ? WP_CONTENT_DIR . '/uploads' : wp_upload_dir()['basedir'];
+    $path = $base_uploads . '/ull-normativa/dompdf-temp/';
+    if (!is_dir($path)) { @mkdir($path, 0755, true); }
+    define('DOMPDF_TEMP_DIR', $path);
 }
 
 // Autoloader principal
 spl_autoload_register(function ($class) {
     static $base_dir = null;
+    if ($base_dir === null) { $base_dir = DOMPDF_DIR . '/'; }
     
-    if ($base_dir === null) {
-        $base_dir = DOMPDF_DIR . '/';
-    }
-    
-    // Mapeo de prefijos a directorios
     $prefixes = array(
         'Dompdf\\' => 'src/',
         'FontLib\\' => 'lib/php-font-lib/src/FontLib/',
@@ -555,23 +559,17 @@ spl_autoload_register(function ($class) {
         if (strncmp($prefix, $class, $len) === 0) {
             $relative_class = substr($class, $len);
             $file = $base_dir . $dir . str_replace('\\', '/', $relative_class) . '.php';
-            
             if (file_exists($file)) {
                 require_once $file;
                 return true;
             }
         }
     }
-    
     return false;
 });
 
-// Cargar funciones helper si existen
 $functions_file = DOMPDF_DIR . '/src/functions.php';
-if (file_exists($functions_file)) {
-    require_once $functions_file;
-}
-
+if (file_exists($functions_file)) { require_once $functions_file; }
 PHP;
         
         // Escribir archivo
@@ -581,14 +579,17 @@ PHP;
             return false;
         }
         
+        // Definir base de uploads común (Soporte MULTISITE)
+        $base_uploads = (is_multisite()) ? WP_CONTENT_DIR . '/uploads' : wp_upload_dir()['basedir'];
+
         // Crear directorio de caché de fuentes si no existe
-        $font_cache = wp_upload_dir()['basedir'] . '/ull-normativa/dompdf-cache/';
+        $font_cache = $base_uploads . '/ull-normativa/dompdf-cache/';
         wp_mkdir_p($font_cache);
-        
+    
         // Crear directorio temporal si no existe
-        $temp_dir = wp_upload_dir()['basedir'] . '/ull-normativa/dompdf-temp/';
+        $temp_dir = $base_uploads . '/ull-normativa/dompdf-temp/';
         wp_mkdir_p($temp_dir);
-        
+       
         return true;
     }
     

@@ -69,6 +69,13 @@ class ULL_PDF_Export {
                 require_once ULL_NORMATIVA_PLUGIN_DIR . 'includes/class-dompdf-installer.php';
                 $this->dompdf_installer = new ULL_DOMPDF_Installer();
             }
+            
+            // CARGA FORZADA PARA MULTISITE
+            $autoload = $this->dompdf_installer->get_autoload_path();
+            if ($autoload && file_exists($autoload)) {
+                require_once $autoload;
+            }
+
             return $this->dompdf_installer->get_dompdf_instance();
         }
         
@@ -455,21 +462,22 @@ class ULL_PDF_Export {
      */
     private function add_page_numbers($dompdf) {
         $canvas = $dompdf->getCanvas();
+        $font = 'DejaVu Sans';
+        $size = 10;
+        $color = array(0, 0, 0);
         
-        // NO pasar $font al closure, definirlo dentro
-        $canvas->page_script(function($pageNumber, $pageCount, $canvas) {
-            $text = "Página $pageNumber de $pageCount";
-            $font = 'DejaVu Sans'; // Definir el nombre de fuente como string dentro del closure
-            $size = 10;
-            $width = $canvas->get_width();
-            $height = $canvas->get_height();
-            
-            $text_width = $canvas->get_text_width($text, $font, $size);
+        // En lugar de un closure, pasamos el script como string
+        $canvas->page_script('
+            $text = "Página " . $PAGE_NUM . " de " . $PAGE_COUNT;
+            $font = "' . $font . '";
+            $size = ' . $size . ';
+            $width = $pdf->get_width();
+            $height = $pdf->get_height();
+            $text_width = $fontMetrics->getTextWidth($text, $font, $size);
             $x = $width - $text_width - 30;
             $y = $height - 20;
-            
-            $canvas->text($x, $y, $text, $font, $size, array(0, 0, 0));
-        });
+            $pdf->text($x, $y, $text, $font, $size, array(0,0,0));
+        ');
     }
     
     /**

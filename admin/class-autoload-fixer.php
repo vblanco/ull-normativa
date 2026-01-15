@@ -126,8 +126,13 @@ class ULL_DOMPDF_Autoload_Fixer {
      * Regenerar archivo autoload
      */
     private function regenerate_autoload() {
-        $upload_dir = wp_upload_dir();
-        $install_dir = $upload_dir['basedir'] . '/ull-normativa-libs';
+        // Forzar la ruta global de uploads en Multisite
+        if ( is_multisite() ) {
+            $install_dir = WP_CONTENT_DIR . '/uploads/ull-normativa-libs';
+        } else {
+            $upload_dir = wp_upload_dir();
+            $install_dir = $upload_dir['basedir'] . '/ull-normativa-libs';
+        }
         $dompdf_dir = $install_dir . '/dompdf';
         $autoload_file = $dompdf_dir . '/autoload.inc.php';
         
@@ -159,17 +164,17 @@ if (!defined('DOMPDF_FONT_DIR')) {
 }
 
 if (!defined('DOMPDF_FONT_CACHE')) {
-    $upload_dir = wp_upload_dir();
-    if ($upload_dir && isset($upload_dir['basedir'])) {
-        define('DOMPDF_FONT_CACHE', $upload_dir['basedir'] . '/ull-normativa/dompdf-cache/');
-    }
+    // Usar ruta global de uploads para el caché de fuentes
+    $font_cache = (is_multisite()) ? WP_CONTENT_DIR . '/uploads/ull-normativa/dompdf-cache/' : wp_upload_dir()['basedir'] . '/ull-normativa/dompdf-cache/';
+    if (!is_dir($font_cache)) { @mkdir($font_cache, 0755, true); }
+    define('DOMPDF_FONT_CACHE', $font_cache);
 }
 
+
 if (!defined('DOMPDF_TEMP_DIR')) {
-    $upload_dir = wp_upload_dir();
-    if ($upload_dir && isset($upload_dir['basedir'])) {
-        define('DOMPDF_TEMP_DIR', $upload_dir['basedir'] . '/ull-normativa/dompdf-temp/');
-    }
+    $temp_dir = (is_multisite()) ? WP_CONTENT_DIR . '/uploads/ull-normativa/dompdf-temp/' : wp_upload_dir()['basedir'] . '/ull-normativa/dompdf-temp/';
+    if (!is_dir($temp_dir)) { @mkdir($temp_dir, 0755, true); }
+    define('DOMPDF_TEMP_DIR', $temp_dir);
 }
 
 // CRÍTICO: Cargar Cpdf ANTES del autoloader
