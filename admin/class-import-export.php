@@ -39,8 +39,8 @@ class ULL_Import_Export {
         
         $headers = array(
             'titulo', 'numero', 'fecha_aprobacion', 'fecha_publicacion', 
-            'fecha_vigencia', 'estado', 'tipo', 'categoria', 'organo',
-            'organo_emisor', 'boletin_oficial', 'url_boletin',
+            'fecha_vigencia', 'estado', 'tipo', 'categoria', 'materia', // <-- Añadir materia aquí
+            'organo', 'organo_emisor', 'boletin_oficial', 'url_boletin',
             'ambito_aplicacion', 'resumen', 'palabras_clave', 'contenido'
         );
         
@@ -60,6 +60,7 @@ class ULL_Import_Export {
             'vigente',
             'reglamento',
             'academica',
+            'docencia',
             'consejo-gobierno',
             'Consejo de Gobierno',
             'BOC 2024/15',
@@ -1053,6 +1054,11 @@ class ULL_Import_Export {
                 $this->set_term($post_id, 'categoria_norma', $row['categoria'], $options['create_terms']);
             }
             
+            // NUEVO: Procesar Materia
+            if (isset($row['materia']) && !empty($row['materia'])) {
+                $this->set_term($post_id, 'materia_norma', $row['materia'], $options['create_terms']);
+            }
+
             // Órgano: usar campo 'organo' o 'organo_emisor' para la taxonomía
             $organo_value = '';
             if (isset($row['organo']) && !empty($row['organo'])) {
@@ -1093,55 +1099,39 @@ class ULL_Import_Export {
             return;
         }
         
-        $value = trim($value);
+
+        // Soporte para múltiples valores separados por |
+        $values = explode('|', $value);
+        $term_ids = array();
         
-        // Primero intentar buscar por slug
-        $slug = sanitize_title($value);
-        $term = get_term_by('slug', $slug, $tax);
-        
-        // Si no encuentra por slug, buscar por nombre exacto
-        if (!$term) {
-            $term = get_term_by('name', $value, $tax);
-        }
-        
-        // Si aún no encuentra, buscar comparando nombres normalizados
-        if (!$term) {
-            $terms = get_terms(array(
-                'taxonomy' => $tax,
-                'hide_empty' => false,
-            ));
+        foreach ($values as $single_value) {
+
+            $single_value = trim($single_value);
+            if (empty($single_value)) continue;
             
-            $value_normalized = $this->normalize_string($value);
+            // Primero intentar buscar por slug
+            $slug = sanitize_title($single_value);
+            $term = get_term_by('slug', $slug, $tax);
             
-            foreach ($terms as $t) {
-                // Comparar ignorando mayúsculas
-                if (strcasecmp($t->name, $value) === 0) {
-                    $term = $t;
-                    break;
+            // Si no encuentra por slug, buscar por nombre exacto
+            if (!$term) {
+                $term = get_term_by('name', $single_value, $tax);
+            }
+            
+            // Si no existe y se permite crear
+            if (!$term && $create) {
+                $result = wp_insert_term($single_value, $tax, array('slug' => $slug));
+                if (!is_wp_error($result)) {
+                    $term_ids[] = (int) $result['term_id'];
                 }
-                // Comparar normalizando (sin acentos, minúsculas)
-                if ($this->normalize_string($t->name) === $value_normalized) {
-                    $term = $t;
-                    break;
-                }
-                // Comparar por slug
-                if ($t->slug === $slug) {
-                    $term = $t;
-                    break;
-                }
+            } elseif ($term) {
+                $term_ids[] = (int) $term->term_id;
             }
         }
         
-        // Si no existe y se permite crear, crear el término
-        if (!$term && $create) {
-            $result = wp_insert_term($value, $tax, array('slug' => $slug));
-            if (!is_wp_error($result)) {
-                $term = get_term($result['term_id'], $tax);
-            }
-        }
-        
-        if ($term) {
-            wp_set_object_terms($post_id, array($term->term_id), $tax);
+        if (!empty($term_ids)) {
+            // wp_set_object_terms reemplaza todos los anteriores por estos nuevos
+            wp_set_object_terms($post_id, $term_ids, $tax, false);
         }
     }
     
@@ -1246,6 +1236,15 @@ class ULL_Import_Export {
             
             $cats = get_the_terms($post->ID, 'categoria_norma');
             $item['categoria'] = $cats && !is_wp_error($cats) ? $cats[0]->slug : '';
+
+            // NUEVO: Exportar Materia (múltiples materias)
+            $materias = get_the_terms($post->ID, 'materia_norma');
+            if ($materias && !is_wp_error($materias)) {
+                // Extrae todos los slugs y los une: "investigacion|doctorado|becas"
+                $item['materia'] = implode('|', wp_list_pluck($materias, 'slug'));
+            } else {
+                $item['materia'] = '';
+            }
             
             $organos = get_the_terms($post->ID, 'organo_norma');
             $item['organo'] = $organos && !is_wp_error($organos) ? $organos[0]->slug : '';
@@ -1317,8 +1316,8 @@ class ULL_Import_Export {
         
         $headers = array(
             'titulo', 'numero', 'fecha_aprobacion', 'fecha_publicacion', 
-            'fecha_vigencia', 'estado', 'tipo', 'categoria', 'organo',
-            'organo_emisor', 'boletin_oficial', 'url_boletin',
+            'fecha_vigencia', 'estado', 'tipo', 'categoria', 'materia', // <-- Añadir materia
+            'organo', 'organo_emisor', 'boletin_oficial', 'url_boletin',
             'ambito_aplicacion', 'resumen', 'palabras_clave', 'contenido'
         );
         
